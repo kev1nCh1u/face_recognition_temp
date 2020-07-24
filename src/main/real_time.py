@@ -2,11 +2,6 @@ import face_recognition
 import cv2
 import numpy as np
 
-import serial
-
-# 串接口設定
-serialProtocol = serial.Serial('COM10', 9600, timeout=1)
-
 # This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
 # other example, but it includes some basic performance tweaks to make things run a lot faster:
 #   1. Process each video frame at 1/4 resolution (though still display it at full resolution)
@@ -49,12 +44,6 @@ face_names = []
 process_this_frame = True
 
 while True:
-    # 讀取arduino溫度
-    serialRead = serialProtocol.readline()
-    serialDecode = serialRead.decode('utf-8')
-    serialArray = serialDecode.split()
-    print(serialArray)
-
     # Grab a single frame of video
     ret, frame = video_capture.read()
 
@@ -106,9 +95,7 @@ while True:
         # Draw a label with a name below the face + temp
         cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 255, 0), cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
-        cv2.putText(frame, name + ':' + serialArray[1] +"*C", (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-
-        cv2.putText(frame, serialArray[0] +"*C", (10, 10), font, 1.0, (0, 0, 255), 1)
+        cv2.putText(frame, name + ":37*C", (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
     # Display the resulting image
     cv2.imshow('Video', frame)

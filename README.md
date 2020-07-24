@@ -2,6 +2,12 @@
 
 ## install
 
+### suggest
+
+https://git-scm.com/
+https://code.visualstudio.com/download
+
+
 ### arduino
 https://www.arduino.cc/en/Main/Software
 
@@ -17,6 +23,10 @@ pip install face-recognition
 pip install opencv-python
 ```
 ## use
+### arduino
+open src\main\gy906_main\gy906_main.ino
+
+#### python
 ```
 cd ~/face_recognition_temp
 python src/main/real_time.py
