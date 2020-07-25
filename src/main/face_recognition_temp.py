@@ -5,8 +5,14 @@ import numpy as np
 import serial
 import threading
 
+import os
+
 # 串接口設定
-serialProtocol = serial.Serial('COM10', 9600, timeout=1)
+try:
+    serialProtocol = serial.Serial('COM10', 9600, timeout=1)
+except:
+    print('comport not right check line 12')
+    exit()
 
 # 溫度紀錄 [0]:環境溫度 [1]:物體溫度
 serialArray = np.zeros(2)
@@ -20,11 +26,17 @@ def tempCatch():
         serialArray = serialDecode.split()
         #print(serialArray)
 
-
 # 建立一個子執行緒
 t = threading.Thread(target = tempCatch)
+# 保護
+t.daemon = True
 # 執行該子執行緒
 t.start()
+
+# 查看有哪些照片
+imgDirectory = 'img/face_recognition_known/'
+nowDirectory = os.getcwd() + '/' + imgDirectory
+imgFiles = os.listdir(nowDirectory)
 
 # This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
 # other example, but it includes some basic performance tweaks to make things run a lot faster:
@@ -38,28 +50,20 @@ t.start()
 # Get a reference to webcam #0 (the default one)
 video_capture = cv2.VideoCapture(0)
 
-# Load a sample picture and learn how to recognize it.
-obama_image = face_recognition.load_image_file("img/face_recognition_known/obama.jpg")
-obama_face_encoding = face_recognition.face_encodings(obama_image)[0]
+# 匯入所有照片來訓練辨識
+recognition_face_encoding = np.empty((len(imgFiles),128))
+for i in range(len(imgFiles)):
+    recognitionImage = face_recognition.load_image_file(imgDirectory + imgFiles[i])
+    recognition_face_encoding[i] = face_recognition.face_encodings(recognitionImage)[0]
 
-# Load a second sample picture and learn how to recognize it.
-biden_image = face_recognition.load_image_file("img/face_recognition_known/biden.jpg")
-biden_face_encoding = face_recognition.face_encodings(biden_image)[0]
-
-kevin_image = face_recognition.load_image_file("img/face_recognition_known/kevin.jpg")
-kevin_face_encoding = face_recognition.face_encodings(kevin_image)[0]
+# 檔名轉人名處理
+imgFilesName = imgFiles
+for i in range(len(imgFiles)):
+    imgFilesName[i] = str.split(imgFiles[i],".")[0]
 
 # Create arrays of known face encodings and their names
-known_face_encodings = [
-    obama_face_encoding,
-    biden_face_encoding,
-    kevin_face_encoding
-]
-known_face_names = [
-    "Barack Obama",
-    "Joe Biden",
-    "kevin"
-]
+known_face_encodings = recognition_face_encoding
+known_face_names = imgFilesName
 
 # Initialize some variables
 face_locations = []
@@ -113,12 +117,18 @@ while True:
         right *= 4
         bottom *= 4
         left *= 4
+        
+        # 發燒時換顏色
+        if (float(serialArray[1]) <= 37.):
+            cv2Color = (0, 255, 0)
+        else:
+            cv2Color = (0, 0, 255)
 
         # Draw a box around the face
-        cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
+        cv2.rectangle(frame, (left, top), (right, bottom), cv2Color, 2)
 
         # Draw a label with a name below the face + temp
-        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 255, 0), cv2.FILLED)
+        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), cv2Color, cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
@@ -126,10 +136,12 @@ while True:
     try:
         cv2.putText(frame, serialArray[0] +"*C", (10, 50), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 0, 0), 1)
     except:
+        cv2.putText(frame, 'None', (10, 50), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 0, 0), 1)
         print('Ambient temp error!')
     try:
         cv2.putText(frame, serialArray[1] +"*C", (10, 100), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 0, 255), 1)
     except:
+        cv2.putText(frame, 'None', (10, 100), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 0, 0), 1)
         print('Object temp error!')
 
     # Display the resulting image

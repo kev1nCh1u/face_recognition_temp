@@ -6,6 +6,7 @@
 
 https://git-scm.com/
 https://code.visualstudio.com/download
+https://www.anaconda.com/products/individual
 
 
 ### arduino
@@ -14,7 +15,7 @@ https://www.arduino.cc/en/Main/Software
 Wire
 Adafruit_MLX90614
 
-### python
+### python 3.7.4
 https://www.python.org/downloads/
 ```
 pip install numpy
