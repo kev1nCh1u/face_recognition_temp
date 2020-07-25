@@ -22,6 +22,7 @@ pip install numpy
 pip install pyserial
 pip install face-recognition
 pip install opencv-python
+pip install mysql.connector
 ```
 ## use
 ### arduino
