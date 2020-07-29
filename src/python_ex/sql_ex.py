@@ -11,14 +11,13 @@ mydb = mysql.connector.connect(
 )
  
 print(mydb)
-
 mycursor = mydb.cursor()
 
 sql = "INSERT INTO face_recognition_temp (name, temp, time) VALUES (%s, %s, %s)"
 val = ("kelly", "36.6", datetime.datetime.now())
 mycursor.execute(sql, val)
 mydb.commit()
-print(mycursor.rowcount, "success")
+print(mycursor.rowcount, "sql success")
 
 mycursor.execute("SELECT * FROM face_recognition_temp")
 myresult = mycursor.fetchall()

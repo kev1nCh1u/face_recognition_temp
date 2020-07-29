@@ -7,6 +7,9 @@ import threading
 
 import os
 
+import mysql.connector
+import datetime
+
 # 串接口設定
 try:
     serialProtocol = serial.Serial('COM10', 9600, timeout=1)
@@ -28,10 +31,28 @@ def tempCatch():
 
 # 建立一個子執行緒
 t = threading.Thread(target = tempCatch)
-# 保護
+# 保護->連同關閉
 t.daemon = True
 # 執行該子執行緒
 t.start()
+
+# 溫度計路旗標
+tempFlag = 0
+
+# 資料庫
+try:
+    print(datetime.datetime.now())
+    mydb = mysql.connector.connect(
+      host="localhost",
+      user="root",
+      passwd="",
+      database="face_recognition_temp"
+    )
+    print(mydb)
+    mycursor = mydb.cursor()
+    sql = "INSERT INTO face_recognition_temp (name, temp, time) VALUES (%s, %s, %s)"
+except:
+    print('cannot conect to mysql !')
 
 # 查看有哪些照片
 imgDirectory = 'img/face_recognition_known/'
@@ -144,6 +165,24 @@ while True:
         cv2.putText(frame, 'None', (10, 100), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 0, 0), 1)
         print('Object temp error!')
 
+    # 溫度紀錄
+    if(serialArray[1] > serialArray[0] and tempFlag < 5):
+            tempFlag += 1
+    if(serialArray[1] < serialArray[0]):
+        tempFlag = 0 
+    if(len(face_names) == 1 and tempFlag == 5):
+        tempFlag = 6
+
+        # 寫入資料庫
+        try:
+            val = (face_names[0], serialArray[1], datetime.datetime.now())
+            mycursor.execute(sql, val)
+            mydb.commit()
+            print(serialArray[1],mycursor.rowcount, "sql success")
+        except:
+            print('cannot write mysql !')
+
+        
     # Display the resulting image
     cv2.imshow('Video', frame)
 
