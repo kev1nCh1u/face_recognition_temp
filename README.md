@@ -3,11 +3,11 @@
 ## install
 
 ### suggest
-
 https://git-scm.com/
 https://code.visualstudio.com/download
-https://www.anaconda.com/products/individual
 
+### for windows
+https://visualstudio.microsoft.com/
 
 ### arduino
 https://www.arduino.cc/en/Main/Software

@@ -14,7 +14,7 @@ import datetime
 try:
     serialProtocol = serial.Serial('COM10', 9600, timeout=1)
 except:
-    print('comport not right check line 12')
+    print('Error comport not right check line 12 !!!')
     exit()
 
 # 溫度紀錄 [0]:環境溫度 [1]:物體溫度
@@ -52,7 +52,7 @@ try:
     mycursor = mydb.cursor()
     sql = "INSERT INTO face_recognition_temp (name, temp, time) VALUES (%s, %s, %s)"
 except:
-    print('cannot conect to mysql !')
+    print('Error cannot conect to mysql !!!')
 
 # 查看有哪些照片
 imgDirectory = 'img/face_recognition_known/'
@@ -158,12 +158,12 @@ while True:
         cv2.putText(frame, serialArray[0] +"*C", (10, 50), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 0, 0), 1)
     except:
         cv2.putText(frame, 'None', (10, 50), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 0, 0), 1)
-        print('Ambient temp error!')
+        print('Error Ambient temp !!!')
     try:
         cv2.putText(frame, serialArray[1] +"*C", (10, 100), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 0, 255), 1)
     except:
         cv2.putText(frame, 'None', (10, 100), cv2.FONT_HERSHEY_DUPLEX, 1.0, (0, 0, 0), 1)
-        print('Object temp error!')
+        print('Error Object temp !!!')
 
     # 溫度紀錄
     if(serialArray[1] > serialArray[0] and tempFlag < 5):
@@ -180,7 +180,7 @@ while True:
             mydb.commit()
             print(serialArray[1],mycursor.rowcount, "sql success")
         except:
-            print('cannot write mysql !')
+            print('Error cannot write mysql  !!!')
 
         
     # Display the resulting image
