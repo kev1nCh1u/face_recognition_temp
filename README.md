@@ -33,3 +33,7 @@ open src\main\gy906_main\gy906_main.ino
 cd ~/face_recognition_temp
 python src/main/real_time.py
 ```
+
+## reference
+https://github.com/ageitgey/face_recognition.git
+https://github.com/ageitgey/face_recognition/issues/175#issue-257710508
