@@ -8,6 +8,8 @@ https://code.visualstudio.com/download
 
 ### for windows
 https://visualstudio.microsoft.com/
+https://cmake.org/
+http://mingw-w64.org/doku.php/download
 
 ### arduino
 https://www.arduino.cc/en/Main/Software
